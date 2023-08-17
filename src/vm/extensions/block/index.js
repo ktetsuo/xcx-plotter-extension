@@ -3,8 +3,8 @@ import ArgumentType from '../../extension-support/argument-type';
 import Cast from '../../util/cast';
 import translations from './translations.json';
 import blockIcon from './block-icon.png';
-const Clone = require('../../util/clone');
-const TargetType = require('../../extension-support/target-type');
+import Clone from '../../util/clone';
+import TargetType from '../../extension-support/target-type';
 
 /**
  * Formatter which is used for translation.
