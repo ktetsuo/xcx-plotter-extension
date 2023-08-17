@@ -260,6 +260,7 @@ var ExtensionBlocks = /*#__PURE__*/function () {
     this._onTargetMoved = this._onTargetMoved.bind(this);
     this._penDrawableId = -1;
     this._penSkinId = -1;
+    this._actionBuf = [];
     runtime.on('targetWasCreated', this._onTargetCreated);
     runtime.on('RUNTIME_DISPOSED', this.clear.bind(this));
     if (runtime.formatMessage) {
@@ -299,6 +300,8 @@ var ExtensionBlocks = /*#__PURE__*/function () {
       var penSkinId = this._getPenLayerID();
       this.runtime.renderer.penLine(penSkinId, penState.penAttributes, oldX, oldY, target.x, target.y);
       this.runtime.requestRedraw();
+      this._actionBuf.push('PD' + target.x.toString() + ',' + target.y.toString() + ';');
+      console.log(this._actionBuf.join(''));
     }
   }, {
     key: "_onTargetCreated",
@@ -318,6 +321,7 @@ var ExtensionBlocks = /*#__PURE__*/function () {
     key: "clear",
     value: function clear() {
       console.log("Clear");
+      this._actionBuf.splice(0);
       var penSkinId = this._getPenLayerID();
       if (penSkinId >= 0) {
         this.runtime.renderer.penClear(penSkinId);
@@ -334,6 +338,9 @@ var ExtensionBlocks = /*#__PURE__*/function () {
         this.isPenDown = true;
         // target.addListener(RenderedTarget.EVENT_TARGET_MOVED, this._onTargetMoved);
         target.addListener('TARGET_MOVED', this._onTargetMoved);
+        this._actionBuf.push('PU' + target.x.toString() + ',' + target.y.toString() + ';');
+        this._actionBuf.push('PD;');
+        console.log(this._actionBuf.join(''));
       }
     }
   }, {
@@ -346,6 +353,8 @@ var ExtensionBlocks = /*#__PURE__*/function () {
         this.isPenDown = false;
         // target.removeListener(RenderedTarget.EVENT_TARGET_MOVED, this._onTargetMoved);
         target.removeListener('TARGET_MOVED', this._onTargetMoved);
+        this._actionBuf.push('PU;');
+        console.log(this._actionBuf.join(''));
       }
     }
 
