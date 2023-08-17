@@ -1,0 +1,14 @@
+{
+  "en": {
+    "plotterExtention.name": "Plotter Extention",
+    "plotterExtention.doIt": "do it [SCRIPT]"
+  },
+  "ja": {
+    "plotterExtention.name": "Plotter Extention",
+    "plotterExtention.doIt": "[SCRIPT] を実行する"
+  },
+  "ja-Hira": {
+    "plotterExtention.name": "Plotter Extention",
+    "plotterExtention.doIt": "[SCRIPT] をじっこうする"
+  }
+}

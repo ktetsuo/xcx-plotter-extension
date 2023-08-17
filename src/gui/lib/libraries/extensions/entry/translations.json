@@ -1,0 +1,14 @@
+{
+  "en": {
+    "plotterExtention.entry.name": "Plotter Extention",
+    "plotterExtention.entry.description": "Description of this extension"
+  },
+  "ja": {
+    "plotterExtention.entry.name": "Plotter Extention",
+    "plotterExtention.entry.description": "拡張機能の説明"
+  },
+  "ja-Hira": {
+    "plotterExtention.entry.name": "Plotter Extention",
+    "plotterExtention.entry.description": "かくちょうきのうのせつめい"
+  }
+}

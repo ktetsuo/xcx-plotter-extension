@@ -1,0 +1,12 @@
+{
+  "name": "xcx-plotter-extension",
+  "version": "0.0.0",
+  "scripts": {
+    "register": "npx xcratch-register --id=plotterExtention --gui=../scratch-gui --block=./src/vm/extensions/block --entry=./src/gui/lib/libraries/extensions/entry --core --link --use=extension-support util",
+    "build": "npx xcratch-build --module=plotterExtention --gui=../scratch-gui --block=./src/vm/extensions/block --entry=./src/gui/lib/libraries/extensions/entry"
+  },
+  "devDependencies": {
+    "xcratch-build": "^0.4.0",
+    "xcratch-register": "^0.4.2"
+  }
+}
