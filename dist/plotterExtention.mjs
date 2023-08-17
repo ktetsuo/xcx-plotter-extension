@@ -156,536 +156,6 @@ var BlockType = {
 };
 var blockType = BlockType;
 
-/**
- * Block argument types
- * @enum {string}
- */
-var ArgumentType = {
-  /**
-   * Numeric value with angle picker
-   */
-  ANGLE: 'angle',
-  /**
-   * Boolean value with hexagonal placeholder
-   */
-  BOOLEAN: 'Boolean',
-  /**
-   * Numeric value with color picker
-   */
-  COLOR: 'color',
-  /**
-   * Numeric value with text field
-   */
-  NUMBER: 'number',
-  /**
-   * String value with text field
-   */
-  STRING: 'string',
-  /**
-   * String value with matrix field
-   */
-  MATRIX: 'matrix',
-  /**
-   * MIDI note number with note picker (piano) field
-   */
-  NOTE: 'note',
-  /**
-   * Inline image on block (as part of the label)
-   */
-  IMAGE: 'image'
-};
-var argumentType = ArgumentType;
-
-var Color$1 = /*#__PURE__*/function () {
-  function Color() {
-    _classCallCheck(this, Color);
-  }
-  _createClass(Color, null, [{
-    key: "RGB_BLACK",
-    get:
-    /**
-     * @typedef {object} RGBObject - An object representing a color in RGB format.
-     * @property {number} r - the red component, in the range [0, 255].
-     * @property {number} g - the green component, in the range [0, 255].
-     * @property {number} b - the blue component, in the range [0, 255].
-     */
-
-    /**
-     * @typedef {object} HSVObject - An object representing a color in HSV format.
-     * @property {number} h - hue, in the range [0-359).
-     * @property {number} s - saturation, in the range [0,1].
-     * @property {number} v - value, in the range [0,1].
-     */
-
-    /** @type {RGBObject} */
-    function get() {
-      return {
-        r: 0,
-        g: 0,
-        b: 0
-      };
-    }
-
-    /** @type {RGBObject} */
-  }, {
-    key: "RGB_WHITE",
-    get: function get() {
-      return {
-        r: 255,
-        g: 255,
-        b: 255
-      };
-    }
-
-    /**
-     * Convert a Scratch decimal color to a hex string, #RRGGBB.
-     * @param {number} decimal RGB color as a decimal.
-     * @return {string} RGB color as #RRGGBB hex string.
-     */
-  }, {
-    key: "decimalToHex",
-    value: function decimalToHex(decimal) {
-      if (decimal < 0) {
-        decimal += 0xFFFFFF + 1;
-      }
-      var hex = Number(decimal).toString(16);
-      hex = "#".concat('000000'.substr(0, 6 - hex.length)).concat(hex);
-      return hex;
-    }
-
-    /**
-     * Convert a Scratch decimal color to an RGB color object.
-     * @param {number} decimal RGB color as decimal.
-     * @return {RGBObject} rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
-     */
-  }, {
-    key: "decimalToRgb",
-    value: function decimalToRgb(decimal) {
-      var a = decimal >> 24 & 0xFF;
-      var r = decimal >> 16 & 0xFF;
-      var g = decimal >> 8 & 0xFF;
-      var b = decimal & 0xFF;
-      return {
-        r: r,
-        g: g,
-        b: b,
-        a: a > 0 ? a : 255
-      };
-    }
-
-    /**
-     * Convert a hex color (e.g., F00, #03F, #0033FF) to an RGB color object.
-     * CC-BY-SA Tim Down:
-     * https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
-     * @param {!string} hex Hex representation of the color.
-     * @return {RGBObject} null on failure, or rgb: {r: red [0,255], g: green [0,255], b: blue [0,255]}.
-     */
-  }, {
-    key: "hexToRgb",
-    value: function hexToRgb(hex) {
-      var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-      hex = hex.replace(shorthandRegex, function (m, r, g, b) {
-        return r + r + g + g + b + b;
-      });
-      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-      return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-      } : null;
-    }
-
-    /**
-     * Convert an RGB color object to a hex color.
-     * @param {RGBObject} rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
-     * @return {!string} Hex representation of the color.
-     */
-  }, {
-    key: "rgbToHex",
-    value: function rgbToHex(rgb) {
-      return Color.decimalToHex(Color.rgbToDecimal(rgb));
-    }
-
-    /**
-     * Convert an RGB color object to a Scratch decimal color.
-     * @param {RGBObject} rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
-     * @return {!number} Number representing the color.
-     */
-  }, {
-    key: "rgbToDecimal",
-    value: function rgbToDecimal(rgb) {
-      return (rgb.r << 16) + (rgb.g << 8) + rgb.b;
-    }
-
-    /**
-    * Convert a hex color (e.g., F00, #03F, #0033FF) to a decimal color number.
-    * @param {!string} hex Hex representation of the color.
-    * @return {!number} Number representing the color.
-    */
-  }, {
-    key: "hexToDecimal",
-    value: function hexToDecimal(hex) {
-      return Color.rgbToDecimal(Color.hexToRgb(hex));
-    }
-
-    /**
-     * Convert an HSV color to RGB format.
-     * @param {HSVObject} hsv - {h: hue [0,360), s: saturation [0,1], v: value [0,1]}
-     * @return {RGBObject} rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
-     */
-  }, {
-    key: "hsvToRgb",
-    value: function hsvToRgb(hsv) {
-      var h = hsv.h % 360;
-      if (h < 0) h += 360;
-      var s = Math.max(0, Math.min(hsv.s, 1));
-      var v = Math.max(0, Math.min(hsv.v, 1));
-      var i = Math.floor(h / 60);
-      var f = h / 60 - i;
-      var p = v * (1 - s);
-      var q = v * (1 - s * f);
-      var t = v * (1 - s * (1 - f));
-      var r;
-      var g;
-      var b;
-      switch (i) {
-        default:
-        case 0:
-          r = v;
-          g = t;
-          b = p;
-          break;
-        case 1:
-          r = q;
-          g = v;
-          b = p;
-          break;
-        case 2:
-          r = p;
-          g = v;
-          b = t;
-          break;
-        case 3:
-          r = p;
-          g = q;
-          b = v;
-          break;
-        case 4:
-          r = t;
-          g = p;
-          b = v;
-          break;
-        case 5:
-          r = v;
-          g = p;
-          b = q;
-          break;
-      }
-      return {
-        r: Math.floor(r * 255),
-        g: Math.floor(g * 255),
-        b: Math.floor(b * 255)
-      };
-    }
-
-    /**
-     * Convert an RGB color to HSV format.
-     * @param {RGBObject} rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
-     * @return {HSVObject} hsv - {h: hue [0,360), s: saturation [0,1], v: value [0,1]}
-     */
-  }, {
-    key: "rgbToHsv",
-    value: function rgbToHsv(rgb) {
-      var r = rgb.r / 255;
-      var g = rgb.g / 255;
-      var b = rgb.b / 255;
-      var x = Math.min(Math.min(r, g), b);
-      var v = Math.max(Math.max(r, g), b);
-
-      // For grays, hue will be arbitrarily reported as zero. Otherwise, calculate
-      var h = 0;
-      var s = 0;
-      if (x !== v) {
-        var f = r === x ? g - b : g === x ? b - r : r - g;
-        var i = r === x ? 3 : g === x ? 5 : 1;
-        h = (i - f / (v - x)) * 60 % 360;
-        s = (v - x) / v;
-      }
-      return {
-        h: h,
-        s: s,
-        v: v
-      };
-    }
-
-    /**
-     * Linear interpolation between rgb0 and rgb1.
-     * @param {RGBObject} rgb0 - the color corresponding to fraction1 <= 0.
-     * @param {RGBObject} rgb1 - the color corresponding to fraction1 >= 1.
-     * @param {number} fraction1 - the interpolation parameter. If this is 0.5, for example, mix the two colors equally.
-     * @return {RGBObject} the interpolated color.
-     */
-  }, {
-    key: "mixRgb",
-    value: function mixRgb(rgb0, rgb1, fraction1) {
-      if (fraction1 <= 0) return rgb0;
-      if (fraction1 >= 1) return rgb1;
-      var fraction0 = 1 - fraction1;
-      return {
-        r: fraction0 * rgb0.r + fraction1 * rgb1.r,
-        g: fraction0 * rgb0.g + fraction1 * rgb1.g,
-        b: fraction0 * rgb0.b + fraction1 * rgb1.b
-      };
-    }
-  }]);
-  return Color;
-}();
-var color = Color$1;
-
-var Color = color;
-
-/**
- * @fileoverview
- * Utilities for casting and comparing Scratch data-types.
- * Scratch behaves slightly differently from JavaScript in many respects,
- * and these differences should be encapsulated below.
- * For example, in Scratch, add(1, join("hello", world")) -> 1.
- * This is because "hello world" is cast to 0.
- * In JavaScript, 1 + Number("hello" + "world") would give you NaN.
- * Use when coercing a value before computation.
- */
-var Cast = /*#__PURE__*/function () {
-  function Cast() {
-    _classCallCheck(this, Cast);
-  }
-  _createClass(Cast, null, [{
-    key: "toNumber",
-    value:
-    /**
-     * Scratch cast to number.
-     * Treats NaN as 0.
-     * In Scratch 2.0, this is captured by `interp.numArg.`
-     * @param {*} value Value to cast to number.
-     * @return {number} The Scratch-casted number value.
-     */
-    function toNumber(value) {
-      // If value is already a number we don't need to coerce it with
-      // Number().
-      if (typeof value === 'number') {
-        // Scratch treats NaN as 0, when needed as a number.
-        // E.g., 0 + NaN -> 0.
-        if (Number.isNaN(value)) {
-          return 0;
-        }
-        return value;
-      }
-      var n = Number(value);
-      if (Number.isNaN(n)) {
-        // Scratch treats NaN as 0, when needed as a number.
-        // E.g., 0 + NaN -> 0.
-        return 0;
-      }
-      return n;
-    }
-
-    /**
-     * Scratch cast to boolean.
-     * In Scratch 2.0, this is captured by `interp.boolArg.`
-     * Treats some string values differently from JavaScript.
-     * @param {*} value Value to cast to boolean.
-     * @return {boolean} The Scratch-casted boolean value.
-     */
-  }, {
-    key: "toBoolean",
-    value: function toBoolean(value) {
-      // Already a boolean?
-      if (typeof value === 'boolean') {
-        return value;
-      }
-      if (typeof value === 'string') {
-        // These specific strings are treated as false in Scratch.
-        if (value === '' || value === '0' || value.toLowerCase() === 'false') {
-          return false;
-        }
-        // All other strings treated as true.
-        return true;
-      }
-      // Coerce other values and numbers.
-      return Boolean(value);
-    }
-
-    /**
-     * Scratch cast to string.
-     * @param {*} value Value to cast to string.
-     * @return {string} The Scratch-casted string value.
-     */
-  }, {
-    key: "toString",
-    value: function toString(value) {
-      return String(value);
-    }
-
-    /**
-     * Cast any Scratch argument to an RGB color array to be used for the renderer.
-     * @param {*} value Value to convert to RGB color array.
-     * @return {Array.<number>} [r,g,b], values between 0-255.
-     */
-  }, {
-    key: "toRgbColorList",
-    value: function toRgbColorList(value) {
-      var color = Cast.toRgbColorObject(value);
-      return [color.r, color.g, color.b];
-    }
-
-    /**
-     * Cast any Scratch argument to an RGB color object to be used for the renderer.
-     * @param {*} value Value to convert to RGB color object.
-     * @return {RGBOject} [r,g,b], values between 0-255.
-     */
-  }, {
-    key: "toRgbColorObject",
-    value: function toRgbColorObject(value) {
-      var color;
-      if (typeof value === 'string' && value.substring(0, 1) === '#') {
-        color = Color.hexToRgb(value);
-
-        // If the color wasn't *actually* a hex color, cast to black
-        if (!color) color = {
-          r: 0,
-          g: 0,
-          b: 0,
-          a: 255
-        };
-      } else {
-        color = Color.decimalToRgb(Cast.toNumber(value));
-      }
-      return color;
-    }
-
-    /**
-     * Determine if a Scratch argument is a white space string (or null / empty).
-     * @param {*} val value to check.
-     * @return {boolean} True if the argument is all white spaces or null / empty.
-     */
-  }, {
-    key: "isWhiteSpace",
-    value: function isWhiteSpace(val) {
-      return val === null || typeof val === 'string' && val.trim().length === 0;
-    }
-
-    /**
-     * Compare two values, using Scratch cast, case-insensitive string compare, etc.
-     * In Scratch 2.0, this is captured by `interp.compare.`
-     * @param {*} v1 First value to compare.
-     * @param {*} v2 Second value to compare.
-     * @returns {number} Negative number if v1 < v2; 0 if equal; positive otherwise.
-     */
-  }, {
-    key: "compare",
-    value: function compare(v1, v2) {
-      var n1 = Number(v1);
-      var n2 = Number(v2);
-      if (n1 === 0 && Cast.isWhiteSpace(v1)) {
-        n1 = NaN;
-      } else if (n2 === 0 && Cast.isWhiteSpace(v2)) {
-        n2 = NaN;
-      }
-      if (isNaN(n1) || isNaN(n2)) {
-        // At least one argument can't be converted to a number.
-        // Scratch compares strings as case insensitive.
-        var s1 = String(v1).toLowerCase();
-        var s2 = String(v2).toLowerCase();
-        if (s1 < s2) {
-          return -1;
-        } else if (s1 > s2) {
-          return 1;
-        }
-        return 0;
-      }
-      // Handle the special case of Infinity
-      if (n1 === Infinity && n2 === Infinity || n1 === -Infinity && n2 === -Infinity) {
-        return 0;
-      }
-      // Compare as numbers.
-      return n1 - n2;
-    }
-
-    /**
-     * Determine if a Scratch argument number represents a round integer.
-     * @param {*} val Value to check.
-     * @return {boolean} True if number looks like an integer.
-     */
-  }, {
-    key: "isInt",
-    value: function isInt(val) {
-      // Values that are already numbers.
-      if (typeof val === 'number') {
-        if (isNaN(val)) {
-          // NaN is considered an integer.
-          return true;
-        }
-        // True if it's "round" (e.g., 2.0 and 2).
-        return val === parseInt(val, 10);
-      } else if (typeof val === 'boolean') {
-        // `True` and `false` always represent integer after Scratch cast.
-        return true;
-      } else if (typeof val === 'string') {
-        // If it contains a decimal point, don't consider it an int.
-        return val.indexOf('.') < 0;
-      }
-      return false;
-    }
-  }, {
-    key: "LIST_INVALID",
-    get: function get() {
-      return 'INVALID';
-    }
-  }, {
-    key: "LIST_ALL",
-    get: function get() {
-      return 'ALL';
-    }
-
-    /**
-     * Compute a 1-based index into a list, based on a Scratch argument.
-     * Two special cases may be returned:
-     * LIST_ALL: if the block is referring to all of the items in the list.
-     * LIST_INVALID: if the index was invalid in any way.
-     * @param {*} index Scratch arg, including 1-based numbers or special cases.
-     * @param {number} length Length of the list.
-     * @param {boolean} acceptAll Whether it should accept "all" or not.
-     * @return {(number|string)} 1-based index for list, LIST_ALL, or LIST_INVALID.
-     */
-  }, {
-    key: "toListIndex",
-    value: function toListIndex(index, length, acceptAll) {
-      if (typeof index !== 'number') {
-        if (index === 'all') {
-          return acceptAll ? Cast.LIST_ALL : Cast.LIST_INVALID;
-        }
-        if (index === 'last') {
-          if (length > 0) {
-            return length;
-          }
-          return Cast.LIST_INVALID;
-        } else if (index === 'random' || index === 'any') {
-          if (length > 0) {
-            return 1 + Math.floor(Math.random() * length);
-          }
-          return Cast.LIST_INVALID;
-        }
-      }
-      index = Math.floor(Cast.toNumber(index));
-      if (index < 1 || index > length) {
-        return Cast.LIST_INVALID;
-      }
-      return index;
-    }
-  }]);
-  return Cast;
-}();
-var cast = Cast;
-
 var en = {
 	"plotterExtention.name": "Plotter Extention",
 	"plotterExtention.doIt": "do it [SCRIPT]"
@@ -704,6 +174,9 @@ var translations = {
 };
 
 var img = "data:image/png;base64,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";
+
+var Clone = require('../../util/clone');
+var TargetType = require('../../extension-support/target-type');
 
 /**
  * Formatter which is used for translation.
@@ -748,18 +221,98 @@ var ExtensionBlocks = /*#__PURE__*/function () {
      * @type {Runtime}
      */
     this.runtime = runtime;
+    this.isPenDown = false;
+    this._onTargetCreated = this._onTargetCreated.bind(this);
+    this._onTargetMoved = this._onTargetMoved.bind(this);
+    this._penDrawableId = -1;
+    this._penSkinId = -1;
+    runtime.on('targetWasCreated', this._onTargetCreated);
+    runtime.on('RUNTIME_DISPOSED', this.clear.bind(this));
     if (runtime.formatMessage) {
       // Replace 'formatMessage' to a formatter which is used in the runtime.
       formatMessage = runtime.formatMessage;
     }
   }
   _createClass(ExtensionBlocks, [{
-    key: "doIt",
-    value: function doIt(args) {
-      var func = new Function("return (".concat(cast.toString(args.SCRIPT), ")"));
-      var result = func.call(this);
-      console.log(result);
-      return result;
+    key: "_getPenState",
+    value: function _getPenState(target) {
+      var penState = target.getCustomState(ExtensionBlocks.STATE_KEY);
+      if (!penState) {
+        penState = Clone.simple(ExtensionBlocks.DEFAULT_PEN_STATE);
+        target.setCustomState(ExtensionBlocks.STATE_KEY, penState);
+      }
+      return penState;
+    }
+  }, {
+    key: "_getPenLayerID",
+    value: function _getPenLayerID() {
+      if (this._penSkinId < 0 && this.runtime.renderer) {
+        this._penSkinId = this.runtime.renderer.createPenSkin();
+        this._penDrawableId = this.runtime.renderer.createDrawable('pen');
+        this.runtime.renderer.updateDrawableSkinId(this._penDrawableId, this._penSkinId);
+      }
+      return this._penSkinId;
+    }
+  }, {
+    key: "_onTargetMoved",
+    value: function _onTargetMoved(target, oldX, oldY, isForce) {
+      console.log("_onTargetMoved (%d,%d) -> (%d,%d)", oldX, oldY, target.x, target.y);
+      if (isForce) {
+        console.log("force");
+        return;
+      }
+      var penState = this._getPenState(target);
+      var penSkinId = this._getPenLayerID();
+      this.runtime.renderer.penLine(penSkinId, penState.penAttributes, oldX, oldY, target.x, target.y);
+      this.runtime.requestRedraw();
+    }
+  }, {
+    key: "_onTargetCreated",
+    value: function _onTargetCreated(newTarget, sourceTarget) {
+      if (sourceTarget) {
+        var penState = sourceTarget.getCustomState(Scratch3PenBlocks.STATE_KEY);
+        if (penState) {
+          newTarget.setCustomState(ExtensionBlocks.STATE_KEY, Clone.simple(penState));
+          if (penState.penDown) {
+            // newTarget.addListener(RenderedTarget.EVENT_TARGET_MOVED, this._onTargetMoved);
+            newTarget.addListener("TARGET_MOVED", this._onTargetMoved);
+          }
+        }
+      }
+    }
+  }, {
+    key: "clear",
+    value: function clear() {
+      console.log("Clear");
+      var penSkinId = this._getPenLayerID();
+      if (penSkinId >= 0) {
+        this.runtime.renderer.penClear(penSkinId);
+        this.runtime.requestRedraw();
+      }
+    }
+  }, {
+    key: "penDown",
+    value: function penDown(args, util) {
+      console.log("PenDown");
+      var target = util.target;
+      if (!this.isPenDown) {
+        console.log("addListener");
+        this.isPenDown = true;
+        // target.addListener(RenderedTarget.EVENT_TARGET_MOVED, this._onTargetMoved);
+        target.addListener('TARGET_MOVED', this._onTargetMoved);
+      }
+    }
+  }, {
+    key: "penUp",
+    value: function penUp(args, util) {
+      console.log("PenUp");
+      var target = util.target;
+      if (this.isPenDown) {
+        console.log("removeListener");
+        this.isPenDown = false;
+        // target.removeListener(RenderedTarget.EVENT_TARGET_MOVED, this._onTargetMoved);
+        target.removeListener('TARGET_MOVED', this._onTargetMoved);
+      }
     }
 
     /**
@@ -776,21 +329,35 @@ var ExtensionBlocks = /*#__PURE__*/function () {
         blockIconURI: img,
         showStatusButton: false,
         blocks: [{
-          opcode: 'do-it',
-          blockType: blockType.REPORTER,
-          blockAllThreads: false,
+          opcode: 'clear',
+          blockType: blockType.COMMAND,
           text: formatMessage({
-            id: 'plotterExtention.doIt',
-            default: 'do it [SCRIPT]',
-            description: 'execute javascript for example'
+            id: 'plotterExtention.clear',
+            default: 'clear',
+            description: 'clear'
           }),
-          func: 'doIt',
-          arguments: {
-            SCRIPT: {
-              type: argumentType.STRING,
-              defaultValue: '3 + 4'
-            }
-          }
+          func: 'clear',
+          filter: [TargetType.SPRITE]
+        }, {
+          opcode: 'pen-down',
+          blockType: blockType.COMMAND,
+          text: formatMessage({
+            id: 'plotterExtention.penDown',
+            default: 'pen down',
+            description: 'pen down'
+          }),
+          func: 'penDown',
+          filter: [TargetType.SPRITE]
+        }, {
+          opcode: 'pen-up',
+          blockType: blockType.COMMAND,
+          text: formatMessage({
+            id: 'plotterExtention.penUp',
+            default: 'pen up',
+            description: 'pen up'
+          }),
+          func: 'penUp',
+          filter: [TargetType.SPRITE]
         }],
         menus: {}
       };
@@ -835,6 +402,28 @@ var ExtensionBlocks = /*#__PURE__*/function () {
      */,
     set: function set(url) {
       extensionURL = url;
+    }
+  }, {
+    key: "STATE_KEY",
+    get: function get() {
+      return 'Scratch.pen';
+    }
+  }, {
+    key: "DEFAULT_PEN_STATE",
+    get: function get() {
+      return {
+        penDown: false,
+        color: 66.66,
+        saturation: 100,
+        brightness: 100,
+        transparency: 0,
+        _shade: 50,
+        // Used only for legacy `change shade by` blocks
+        penAttributes: {
+          color4f: [0, 0, 1, 1],
+          diameter: 1
+        }
+      };
     }
   }]);
   return ExtensionBlocks;
