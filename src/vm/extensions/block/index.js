@@ -147,7 +147,7 @@ class ExtensionBlocks {
         const penSkinId = this._getPenLayerID();
         this.runtime.renderer.penLine(penSkinId, penState.penAttributes, oldX, oldY, target.x, target.y);
         this.runtime.requestRedraw();
-        this._actionBuf.push('PD' + target.x.toString() + ',' + target.y.toString() + ';');
+        this._actionBuf.push('PD' + parseInt(target.x).toString() + ',' + parseInt(target.y).toString() + ';');
         console.log(this._actionBuf.join(''));
     }
 
@@ -182,7 +182,7 @@ class ExtensionBlocks {
             this.isPenDown = true;
             // target.addListener(RenderedTarget.EVENT_TARGET_MOVED, this._onTargetMoved);
             target.addListener('TARGET_MOVED', this._onTargetMoved);
-            this._actionBuf.push('PU' + target.x.toString() + ',' + target.y.toString() + ';');
+            this._actionBuf.push('PU' + parseInt(target.x).toString() + ',' + paeseInt(target.y).toString() + ';');
             this._actionBuf.push('PD;');
             console.log(this._actionBuf.join(''));
         }
