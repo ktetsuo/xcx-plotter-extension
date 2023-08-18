@@ -201,6 +201,16 @@ class ExtensionBlocks {
         }
     }
 
+    post (args, util) {
+        console.log("Post");
+        const target = util.target;
+        if (this._actionBuf.length > 0) {
+            const body = this._actionBuf.join('');
+            console.log(body);
+            const pr = fetch(args.URL, {method: 'POST', body: body});
+        }
+    }
+
     /**
      * @returns {object} metadata for this extension and its blocks.
      */
@@ -244,6 +254,23 @@ class ExtensionBlocks {
                         description: 'pen up'
                     }),
                     func: 'penUp',
+                    filter: [TargetType.SPRITE]
+                },
+                {
+                    opcode: 'post',
+                    blockType: BlockType.COMMAND,
+                    text: formatMessage({
+                        id: 'plotterExtention.post',
+                        default: 'post to [URL]',
+                        description: 'HTTP POST'
+                    }),
+                    func: 'post',
+                    arguments: {
+                        URL: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'http://localhost:1880/plotter'
+                        }
+                    },
                     filter: [TargetType.SPRITE]
                 }
             ],

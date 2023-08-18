@@ -156,6 +156,46 @@ var BlockType = {
 };
 var blockType = BlockType;
 
+/**
+ * Block argument types
+ * @enum {string}
+ */
+var ArgumentType = {
+  /**
+   * Numeric value with angle picker
+   */
+  ANGLE: 'angle',
+  /**
+   * Boolean value with hexagonal placeholder
+   */
+  BOOLEAN: 'Boolean',
+  /**
+   * Numeric value with color picker
+   */
+  COLOR: 'color',
+  /**
+   * Numeric value with text field
+   */
+  NUMBER: 'number',
+  /**
+   * String value with text field
+   */
+  STRING: 'string',
+  /**
+   * String value with matrix field
+   */
+  MATRIX: 'matrix',
+  /**
+   * MIDI note number with note picker (piano) field
+   */
+  NOTE: 'note',
+  /**
+   * Inline image on block (as part of the label)
+   */
+  IMAGE: 'image'
+};
+var argumentType = ArgumentType;
+
 var en = {
 	"plotterExtention.name": "Plotter Extention",
 	"plotterExtention.doIt": "do it [SCRIPT]"
@@ -357,6 +397,20 @@ var ExtensionBlocks = /*#__PURE__*/function () {
         console.log(this._actionBuf.join(''));
       }
     }
+  }, {
+    key: "post",
+    value: function post(args, util) {
+      console.log("Post");
+      util.target;
+      if (this._actionBuf.length > 0) {
+        var body = this._actionBuf.join('');
+        console.log(body);
+        fetch(args.URL, {
+          method: 'POST',
+          body: body
+        });
+      }
+    }
 
     /**
      * @returns {object} metadata for this extension and its blocks.
@@ -400,6 +454,22 @@ var ExtensionBlocks = /*#__PURE__*/function () {
             description: 'pen up'
           }),
           func: 'penUp',
+          filter: [targetType.SPRITE]
+        }, {
+          opcode: 'post',
+          blockType: blockType.COMMAND,
+          text: formatMessage({
+            id: 'plotterExtention.post',
+            default: 'post to [URL]',
+            description: 'HTTP POST'
+          }),
+          func: 'post',
+          arguments: {
+            URL: {
+              type: argumentType.STRING,
+              defaultValue: 'http://localhost:1880/plotter'
+            }
+          },
           filter: [targetType.SPRITE]
         }],
         menus: {}
