@@ -92,6 +92,9 @@ class ExtensionBlocks {
         this._penDrawableId = -1;
         this._penSkinId = -1;
         this._actionBuf = [];
+        this._cmdCenterX = 1200;
+        this._cmdCenterY = 1200;
+        this._cmdResolution = (60 / 0.025) / (180 * 2);
 
         runtime.on('targetWasCreated', this._onTargetCreated);
         runtime.on('RUNTIME_DISPOSED', this.clear.bind(this));
@@ -137,6 +140,17 @@ class ExtensionBlocks {
         return this._penSkinId;
     }
 
+
+    _scratchToCmdX (scratchPos) {
+        const cmdPos = scratchPos * this._cmdResolution + this._cmdCenterX;
+        return parseInt(cmdPos);
+    }
+
+    _scratchToCmdY (scratchPos) {
+        const cmdPos = scratchPos * this._cmdResolution + this._cmdCenterY;
+        return parseInt(cmdPos);
+    }
+
     _onTargetMoved (target, oldX, oldY, isForce) {
         console.log("_onTargetMoved (%d,%d) -> (%d,%d)", oldX, oldY, target.x, target.y);
         if (isForce) {
@@ -147,7 +161,7 @@ class ExtensionBlocks {
         const penSkinId = this._getPenLayerID();
         this.runtime.renderer.penLine(penSkinId, penState.penAttributes, oldX, oldY, target.x, target.y);
         this.runtime.requestRedraw();
-        this._actionBuf.push('PD' + parseInt(target.x).toString() + ',' + parseInt(target.y).toString() + ';');
+        this._actionBuf.push('PD' + this._scratchToCmdX(target.x).toString() + ',' + this._scratchToCmdY(target.y).toString() + ';');
         console.log(this._actionBuf.join(''));
     }
 
@@ -182,7 +196,7 @@ class ExtensionBlocks {
             this.isPenDown = true;
             // target.addListener(RenderedTarget.EVENT_TARGET_MOVED, this._onTargetMoved);
             target.addListener('TARGET_MOVED', this._onTargetMoved);
-            this._actionBuf.push('PU' + parseInt(target.x).toString() + ',' + paeseInt(target.y).toString() + ';');
+            this._actionBuf.push('PU' + this._scratchToCmdX(target.x).toString() + ',' + this._scratchToCmdY(target.y).toString() + ';');
             this._actionBuf.push('PD;');
             console.log(this._actionBuf.join(''));
         }
@@ -207,7 +221,7 @@ class ExtensionBlocks {
         if (this._actionBuf.length > 0) {
             const body = this._actionBuf.join('');
             console.log(body);
-            const pr = fetch(args.URL, {method: 'POST', body: body});
+            const pr = fetch(args.URL, { method: 'POST', body: body });
         }
     }
 
@@ -272,7 +286,7 @@ class ExtensionBlocks {
                         }
                     },
                     filter: [TargetType.SPRITE]
-                }
+                },
             ],
             menus: {
             }
