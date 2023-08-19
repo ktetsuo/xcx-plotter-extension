@@ -197,19 +197,28 @@ var ArgumentType = {
 var argumentType = ArgumentType;
 
 var en = {
-	"plotterExtention.name": "Plotter Extention",
-	"plotterExtention.doIt": "do it [SCRIPT]"
+	"plotterExtention.name": "Plotter",
+	"plotterExtention.penDown": "pen down",
+	"plotterExtention.penUp": "pen up",
+	"plotterExtention.clear": "clear",
+	"plotterExtention.post": "post to [URL]"
 };
 var ja = {
-	"plotterExtention.name": "Plotter Extention",
-	"plotterExtention.doIt": "[SCRIPT] を実行する"
+	"plotterExtention.name": "プロッター",
+	"plotterExtention.penDown": "ペンを上げる",
+	"plotterExtention.penUp": "ペンを下ろす",
+	"plotterExtention.clear": "全部消す",
+	"plotterExtention.post": "[URL]に送る"
 };
 var translations = {
 	en: en,
 	ja: ja,
 	"ja-Hira": {
-	"plotterExtention.name": "Plotter Extention",
-	"plotterExtention.doIt": "[SCRIPT] をじっこうする"
+	"plotterExtention.name": "プロッター",
+	"plotterExtention.penDown": "ペンをおろす",
+	"plotterExtention.penUp": "ペンをあげる",
+	"plotterExtention.clear": "ぜんぶけす",
+	"plotterExtention.post": "[URL]におくる"
 }
 };
 
