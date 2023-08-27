@@ -1,0 +1,12 @@
+<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="40px" height="40px" viewBox="-0.5 -0.5 40 40" content="&lt;mxfile&gt;&lt;diagram id=&quot;K-Emk0kYCJvWKAWjnoMA&quot; name=&quot;ページ1&quot;&gt;xZZRk9ogEMc/TR7bSYKJ+tiL5vrSmZvxoe0jk+wlTCM4iBr76QsCJkj0cj1tvZkb9s8Cy2930QBl6/aZ4039jZXQBHFYtgFaBHGcTuU/ZR9du+Kk1ErUCSvyG1xxR0rYOpJgrBFk44oFoxQK4WiYc3Zw3V5Z4x66wRV4wqrAja9+J6WotYrmnfwVSFULV19j6xlqYVvjkh16EloGKOOMCT1atxk0ipplotflV2bPUXGgYtQCs2KPm525mQlMHO1VOdvREtSCMEBPh5oIWG1woWYPMrFSq8W6kVYkh1vB2S/IWMO4VCij0u3plTTNheQHaiMBLqDtSSbwZ2BrEPwoXQ4+8HoANjYprs4rOxByYFgMc5m/jaXY8f2Jiro20PKLqqrugj0mcjIn6qgTQGiJ+GFn5Pin0j8nxlq0PbfF0Riaqi00pBRbOGpaYF6BeAFO5EWBq+wQWtmNqO2e1MtPEKNUfvL8Vka2bMcLc+lUS1A63XEzRUnop8hqHBosyN7tqaG8mRNeGJHBxaGpj08mTeYFmUzdDXTgZk2/CS62QVNnm3jibmPoXm4j842PPbeNctheDxalzikouRlT7HrHjrcc6NO7Wj6zH1XeyZ27vt/go2pqRJeb2ZnLQVu98ooGyusyg3/zAqRvIxKcYFop632voiQUnj4+uTzPsvlc6pwJ2RmMSnkePoRkOgql1T6CcvZfUJ6L8AEoI/VgO90ceTSTgWfv4ywnj+3cZar+7gTJIRRNPUL23e0jukPnRuifMvKADGC7ysh95aPE78mJz2j2bkbS7H5T6u+L7ic5Wv4B&lt;/diagram&gt;&lt;/mxfile&gt;">
+    <defs/>
+    <g>
+        <rect x="0" y="0" width="39" height="39" fill="none" stroke="none" pointer-events="all"/>
+        <path d="M 13 36 Q 36 35 31 30 Q 26 25 37 24" fill="none" stroke="#6666ff" stroke-width="3" stroke-miterlimit="10" pointer-events="stroke"/>
+        <rect x="8" y="2" width="10" height="24" fill="#6666ff" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <path d="M 8 26 L 18 31 L 8 36 Z" fill="#ffcc99" stroke="#000000" stroke-miterlimit="10" transform="rotate(90,13,31)" pointer-events="all"/>
+        <path d="M 10.5 31 L 15.5 33.5 L 10.5 36 Z" fill="#6666ff" stroke="#000000" stroke-miterlimit="10" transform="rotate(90,13,33.5)" pointer-events="all"/>
+        <rect x="1" y="17" width="37" height="4" fill="#e6e6e6" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+        <rect x="6" y="15" width="14" height="8" fill="#e6e6e6" stroke="rgb(0, 0, 0)" pointer-events="all"/>
+    </g>
+</svg>
