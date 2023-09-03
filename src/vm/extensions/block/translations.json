@@ -8,8 +8,8 @@
   },
   "ja": {
     "plotterExtention.name": "プロッター",
-    "plotterExtention.penDown": "ペンを上げる",
-    "plotterExtention.penUp": "ペンを下ろす",
+    "plotterExtention.penDown": "ペンを下ろす",
+    "plotterExtention.penUp": "ペンを上げる",
     "plotterExtention.clear": "全部消す",
     "plotterExtention.post": "[URL]に送る"
   },
