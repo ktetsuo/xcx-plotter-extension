@@ -36,6 +36,33 @@ const EXTENSION_ID = 'plotterExtention';
  */
 let extensionURL = 'https://ktetsuo.github.io/xcx-plotter-extension/dist/plotterExtention.mjs';
 
+class Rect {
+    constructor (minX, minY, maxX, maxY) {
+        this._minX = minX;
+        this._minY = minY;
+        this._maxX = maxX;
+        this._maxY = maxY;
+    }
+    get width () {
+        return this._maxX - this._minX;
+    }
+    get height () {
+        return this._maxY - this._minY;
+    }
+    get minX () {
+        return this._minX;
+    }
+    get minY () {
+        return this._minY;
+    }
+    get maxX () {
+        return this._maxX;
+    }
+    get maxY () {
+        return this._maxY;
+    }
+}
+
 /**
  * Scratch 3.0 blocks for example of Xcratch.
  */
@@ -92,10 +119,7 @@ class ExtensionBlocks {
         this._penDrawableId = -1;
         this._penSkinId = -1;
         this._actionBuf = [];
-        this._cmdCenterX = 1200;
-        this._cmdCenterY = 1200;
-        this._cmdResolution = (60 / 0.025) / (180 * 2);
-
+        this._plotAreaMM = new Rect(0, 0, 160, 120);
         runtime.on('targetWasCreated', this._onTargetCreated);
         runtime.on('RUNTIME_DISPOSED', this.clear.bind(this));
 
@@ -103,6 +127,18 @@ class ExtensionBlocks {
             // Replace 'formatMessage' to a formatter which is used in the runtime.
             formatMessage = runtime.formatMessage;
         }
+    }
+
+    static get SCRATCH_AREA () {
+        return new Rect(-240, -180, 240, 180);
+    }
+
+    static get MM_PER_PLOT () {
+        return 0.025; // mm/plot
+    }
+
+    static get PLOT_PER_MM() {
+        return 40; // plot/mm
     }
 
     static get STATE_KEY () {
@@ -140,15 +176,11 @@ class ExtensionBlocks {
         return this._penSkinId;
     }
 
-
-    _scratchToCmdX (scratchPos) {
-        const cmdPos = scratchPos * this._cmdResolution + this._cmdCenterX;
-        return parseInt(cmdPos);
-    }
-
-    _scratchToCmdY (scratchPos) {
-        const cmdPos = scratchPos * this._cmdResolution + this._cmdCenterY;
-        return parseInt(cmdPos);
+    _scratchPosToCmdPos (scratchPos) {
+        return {
+            x: (scratchPos.y - ExtensionBlocks.SCRATCH_AREA.minY) * this._plotAreaMM.height / ExtensionBlocks.SCRATCH_AREA.height * ExtensionBlocks.PLOT_PER_MM,
+            y: (scratchPos.x - ExtensionBlocks.SCRATCH_AREA.minX) * this._plotAreaMM.width / ExtensionBlocks.SCRATCH_AREA.width * ExtensionBlocks.PLOT_PER_MM,
+        };
     }
 
     _onTargetMoved (target, oldX, oldY, isForce) {
@@ -161,7 +193,8 @@ class ExtensionBlocks {
         const penSkinId = this._getPenLayerID();
         this.runtime.renderer.penLine(penSkinId, penState.penAttributes, oldX, oldY, target.x, target.y);
         this.runtime.requestRedraw();
-        this._actionBuf.push('PD' + this._scratchToCmdX(target.x).toString() + ',' + this._scratchToCmdY(target.y).toString() + ';');
+        const cmdPos = this._scratchPosToCmdPos(target);
+        this._actionBuf.push('PD' + cmdPos.x.toFixed().toString() + ',' + cmdPos.y.toFixed().toString() + ';');
         console.log(this._actionBuf.join(''));
     }
 
@@ -196,7 +229,8 @@ class ExtensionBlocks {
             this.isPenDown = true;
             // target.addListener(RenderedTarget.EVENT_TARGET_MOVED, this._onTargetMoved);
             target.addListener('TARGET_MOVED', this._onTargetMoved);
-            this._actionBuf.push('PU' + this._scratchToCmdX(target.x).toString() + ',' + this._scratchToCmdY(target.y).toString() + ';');
+            const cmdPos = this._scratchPosToCmdPos(target);
+            this._actionBuf.push('PU' + cmdPos.x.toFixed().toString() + ',' + cmdPos.y.toFixed().toString() + ';');
             this._actionBuf.push('PD;');
             console.log(this._actionBuf.join(''));
         }

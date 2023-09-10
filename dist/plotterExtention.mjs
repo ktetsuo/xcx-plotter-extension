@@ -288,7 +288,47 @@ var EXTENSION_ID = 'plotterExtention';
  * @type {string}
  */
 var extensionURL = 'https://ktetsuo.github.io/xcx-plotter-extension/dist/plotterExtention.mjs';
-
+var Rect = /*#__PURE__*/function () {
+  function Rect(minX, minY, maxX, maxY) {
+    _classCallCheck(this, Rect);
+    this._minX = minX;
+    this._minY = minY;
+    this._maxX = maxX;
+    this._maxY = maxY;
+  }
+  _createClass(Rect, [{
+    key: "width",
+    get: function get() {
+      return this._maxX - this._minX;
+    }
+  }, {
+    key: "height",
+    get: function get() {
+      return this._maxY - this._minY;
+    }
+  }, {
+    key: "minX",
+    get: function get() {
+      return this._minX;
+    }
+  }, {
+    key: "minY",
+    get: function get() {
+      return this._minY;
+    }
+  }, {
+    key: "maxX",
+    get: function get() {
+      return this._maxX;
+    }
+  }, {
+    key: "maxY",
+    get: function get() {
+      return this._maxY;
+    }
+  }]);
+  return Rect;
+}();
 /**
  * Scratch 3.0 blocks for example of Xcratch.
  */
@@ -310,9 +350,7 @@ var ExtensionBlocks = /*#__PURE__*/function () {
     this._penDrawableId = -1;
     this._penSkinId = -1;
     this._actionBuf = [];
-    this._cmdCenterX = 1200;
-    this._cmdCenterY = 1200;
-    this._cmdResolution = 60 / 0.025 / (180 * 2);
+    this._plotAreaMM = new Rect(0, 0, 160, 120);
     runtime.on('targetWasCreated', this._onTargetCreated);
     runtime.on('RUNTIME_DISPOSED', this.clear.bind(this));
     if (runtime.formatMessage) {
@@ -341,16 +379,12 @@ var ExtensionBlocks = /*#__PURE__*/function () {
       return this._penSkinId;
     }
   }, {
-    key: "_scratchToCmdX",
-    value: function _scratchToCmdX(scratchPos) {
-      var cmdPos = scratchPos * this._cmdResolution + this._cmdCenterX;
-      return parseInt(cmdPos);
-    }
-  }, {
-    key: "_scratchToCmdY",
-    value: function _scratchToCmdY(scratchPos) {
-      var cmdPos = scratchPos * this._cmdResolution + this._cmdCenterY;
-      return parseInt(cmdPos);
+    key: "_scratchPosToCmdPos",
+    value: function _scratchPosToCmdPos(scratchPos) {
+      return {
+        x: (scratchPos.y - ExtensionBlocks.SCRATCH_AREA.minY) * this._plotAreaMM.height / ExtensionBlocks.SCRATCH_AREA.height * ExtensionBlocks.PLOT_PER_MM,
+        y: (scratchPos.x - ExtensionBlocks.SCRATCH_AREA.minX) * this._plotAreaMM.width / ExtensionBlocks.SCRATCH_AREA.width * ExtensionBlocks.PLOT_PER_MM
+      };
     }
   }, {
     key: "_onTargetMoved",
@@ -364,7 +398,8 @@ var ExtensionBlocks = /*#__PURE__*/function () {
       var penSkinId = this._getPenLayerID();
       this.runtime.renderer.penLine(penSkinId, penState.penAttributes, oldX, oldY, target.x, target.y);
       this.runtime.requestRedraw();
-      this._actionBuf.push('PD' + this._scratchToCmdX(target.x).toString() + ',' + this._scratchToCmdY(target.y).toString() + ';');
+      var cmdPos = this._scratchPosToCmdPos(target);
+      this._actionBuf.push('PD' + cmdPos.x.toFixed().toString() + ',' + cmdPos.y.toFixed().toString() + ';');
       console.log(this._actionBuf.join(''));
     }
   }, {
@@ -402,7 +437,8 @@ var ExtensionBlocks = /*#__PURE__*/function () {
         this.isPenDown = true;
         // target.addListener(RenderedTarget.EVENT_TARGET_MOVED, this._onTargetMoved);
         target.addListener('TARGET_MOVED', this._onTargetMoved);
-        this._actionBuf.push('PU' + this._scratchToCmdX(target.x).toString() + ',' + this._scratchToCmdY(target.y).toString() + ';');
+        var cmdPos = this._scratchPosToCmdPos(target);
+        this._actionBuf.push('PU' + cmdPos.x.toFixed().toString() + ',' + cmdPos.y.toFixed().toString() + ';');
         this._actionBuf.push('PD;');
         console.log(this._actionBuf.join(''));
       }
@@ -539,6 +575,21 @@ var ExtensionBlocks = /*#__PURE__*/function () {
      */,
     set: function set(url) {
       extensionURL = url;
+    }
+  }, {
+    key: "SCRATCH_AREA",
+    get: function get() {
+      return new Rect(-240, -180, 240, 180);
+    }
+  }, {
+    key: "MM_PER_PLOT",
+    get: function get() {
+      return 0.025; // mm/plot
+    }
+  }, {
+    key: "PLOT_PER_MM",
+    get: function get() {
+      return 40; // plot/mm
     }
   }, {
     key: "STATE_KEY",
