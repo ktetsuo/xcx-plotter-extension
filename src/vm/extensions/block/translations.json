@@ -3,6 +3,7 @@
     "plotterExtention.name": "Plotter",
     "plotterExtention.penDown": "pen down",
     "plotterExtention.penUp": "pen up",
+    "plotterExtention.paperFeed": "paper feed",
     "plotterExtention.clear": "clear",
     "plotterExtention.post": "post to [URL]"
   },
@@ -10,6 +11,7 @@
     "plotterExtention.name": "プロッター",
     "plotterExtention.penDown": "ペンを下ろす",
     "plotterExtention.penUp": "ペンを上げる",
+    "plotterExtention.paperFeed": "紙を送る",
     "plotterExtention.clear": "全部消す",
     "plotterExtention.post": "[URL]に送る"
   },
@@ -17,6 +19,7 @@
     "plotterExtention.name": "プロッター",
     "plotterExtention.penDown": "ペンをおろす",
     "plotterExtention.penUp": "ペンをあげる",
+    "plotterExtention.paperFeed": "かみをおくる",
     "plotterExtention.clear": "ぜんぶけす",
     "plotterExtention.post": "[URL]におくる"
   }

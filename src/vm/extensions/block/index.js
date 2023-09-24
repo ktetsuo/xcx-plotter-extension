@@ -249,6 +249,11 @@ class ExtensionBlocks {
         }
     }
 
+    paperFeed(args, util) {
+        console.log("PaperFeed");
+        this._actionBuf.push('PG;');
+    }
+
     post (args, util) {
         console.log("Post");
         const target = util.target;
@@ -302,6 +307,17 @@ class ExtensionBlocks {
                         description: 'pen up'
                     }),
                     func: 'penUp',
+                    filter: [TargetType.SPRITE]
+                },
+                {
+                    opcode: 'paper-feed',
+                    blockType: BlockType.COMMAND,
+                    text: formatMessage({
+                        id: 'plotterExtention.paperFeed',
+                        default: 'paper feed',
+                        description: 'paper feed'
+                    }),
+                    func: 'paperFeed',
                     filter: [TargetType.SPRITE]
                 },
                 {
