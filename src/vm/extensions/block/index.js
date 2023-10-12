@@ -122,6 +122,7 @@ class ExtensionBlocks {
         this._plotAreaMM = new Rect(0, 0, 160, 120);
         runtime.on('targetWasCreated', this._onTargetCreated);
         runtime.on('RUNTIME_DISPOSED', this.clear.bind(this));
+        this.clear();
 
         if (runtime.formatMessage) {
             // Replace 'formatMessage' to a formatter which is used in the runtime.
@@ -214,6 +215,7 @@ class ExtensionBlocks {
     clear () {
         console.log("Clear");
         this._actionBuf.splice(0);
+        this._actionBuf.push("VS50;!ST1,0;");
         const penSkinId = this._getPenLayerID();
         if (penSkinId >= 0) {
             this.runtime.renderer.penClear(penSkinId);
