@@ -63,6 +63,90 @@ class Rect {
     }
 }
 
+
+class Action {
+    static get PU() {
+        return 1;
+    }
+    static get PD() {
+        return 2;
+    }
+    static get PG() {
+        return 3;
+    }
+    constructor(act, x, y) {
+        this._act = act;
+        this._x = x;
+        this._y = y;
+    }
+    get x() {
+        return this._x;
+    }
+    get y() {
+        return this._y;
+    }
+    offset(dx, dy) {
+        const a = new Action(this._act, this._x, this._y);
+        if (this._x != null && this._y != null) {
+            a._x += dx;
+            a._y += dy;
+        }
+        return a;
+    }
+    toString() {
+        let s = "";
+        switch (this._act) {
+        case Action.PU:
+            s = "PU";
+            break;
+        case Action.PD:
+            s = "PD";
+            break;
+        case Action.PG:
+            s = "PG";
+            break;
+        default:
+            break;
+        }
+        if (this._x != null && this._y != null) {
+            s += this._x.toFixed().toString() + "," + this._y.toFixed().toString();
+        }
+        if(s) {
+            s += ";"
+        }
+        return s;
+    }
+}
+
+class CommandBuf {
+    constructor() {
+        this._actionBuf = [];
+    }
+    clear() {
+        this._actionBuf.splice(0);
+    }
+    push(act) {
+        this._actionBuf.push(act);
+    }
+    toString() {
+        let s = "VS50;!ST1,0;";
+        let xmin = 99999999;
+        for(let i = 0; i < this._actionBuf.length; i++) {
+            const x = this._actionBuf[i].x;
+            if (x != null && x < xmin) {
+                xmin = x;
+            }
+        }
+        for(let i = 0; i < this._actionBuf.length; i++) {
+            const act = this._actionBuf[i].offset(-xmin, 0);
+            s += act.toString();
+        }
+        s += "PG;";
+        return s;
+    }
+    
+}
+
 /**
  * Scratch 3.0 blocks for example of Xcratch.
  */
@@ -118,7 +202,7 @@ class ExtensionBlocks {
         this._onTargetMoved = this._onTargetMoved.bind(this);
         this._penDrawableId = -1;
         this._penSkinId = -1;
-        this._actionBuf = [];
+        this._commandBuf = new CommandBuf();
         this._plotAreaMM = new Rect(0, 0, 160, 120);
         runtime.on('targetWasCreated', this._onTargetCreated);
         runtime.on('RUNTIME_DISPOSED', this.clear.bind(this));
@@ -195,8 +279,8 @@ class ExtensionBlocks {
         this.runtime.renderer.penLine(penSkinId, penState.penAttributes, oldX, oldY, target.x, target.y);
         this.runtime.requestRedraw();
         const cmdPos = this._scratchPosToCmdPos(target);
-        this._actionBuf.push('PD' + cmdPos.x.toFixed().toString() + ',' + cmdPos.y.toFixed().toString() + ';');
-        console.log(this._actionBuf.join(''));
+        this._commandBuf.push(new Action(Action.PD, cmdPos.x, cmdPos.y));
+        console.log(this._commandBuf.toString());
     }
 
     _onTargetCreated (newTarget, sourceTarget) {
@@ -214,8 +298,7 @@ class ExtensionBlocks {
 
     clear () {
         console.log("Clear");
-        this._actionBuf.splice(0);
-        this._actionBuf.push("VS50;!ST1,0;");
+        this._commandBuf.clear();
         const penSkinId = this._getPenLayerID();
         if (penSkinId >= 0) {
             this.runtime.renderer.penClear(penSkinId);
@@ -232,9 +315,9 @@ class ExtensionBlocks {
             // target.addListener(RenderedTarget.EVENT_TARGET_MOVED, this._onTargetMoved);
             target.addListener('TARGET_MOVED', this._onTargetMoved);
             const cmdPos = this._scratchPosToCmdPos(target);
-            this._actionBuf.push('PU' + cmdPos.x.toFixed().toString() + ',' + cmdPos.y.toFixed().toString() + ';');
-            this._actionBuf.push('PD;');
-            console.log(this._actionBuf.join(''));
+            this._commandBuf.push(new Action(Action.PU, cmdPos.x, cmdPos.y));
+            this._commandBuf.push(new Action(Action.PD, null, null));
+            console.log(this._commandBuf.toString());
         }
     }
 
@@ -246,21 +329,21 @@ class ExtensionBlocks {
             this.isPenDown = false;
             // target.removeListener(RenderedTarget.EVENT_TARGET_MOVED, this._onTargetMoved);
             target.removeListener('TARGET_MOVED', this._onTargetMoved);
-            this._actionBuf.push('PU;');
-            console.log(this._actionBuf.join(''));
+            this._commandBuf.push(new Action(Action.PU, null, null));
+            console.log(this._commandBuf.toString(''));
         }
     }
 
     paperFeed(args, util) {
         console.log("PaperFeed");
-        this._actionBuf.push('PG;');
+        this._commandBuf.push(new Action(Action.PG, null, null));
     }
 
     post (args, util) {
         console.log("Post");
         const target = util.target;
-        if (this._actionBuf.length > 0) {
-            const body = this._actionBuf.join('');
+        const body = this._commandBuf.toString();
+        if (body) {
             console.log(body);
             const pr = fetch(args.URL, { method: 'POST', body: body });
         }
